@@ -17,30 +17,24 @@ const getUsers = (req, res) => {
 // Agregar un nuevo usuario
 const addUser = (req, res) => {
     try {
-        console.log("📥 Datos recibidos en req.body:", req.body); // 🛠️ Verificar qué llega
+        console.log("📥 req.body recibido:", req.body); // Ver qué está llegando
 
-        const users = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-        console.log("📄 Usuarios antes de agregar:", users); // Verificar si el archivo se lee bien
-
-        const newUser = req.body;
-        if (!newUser || !newUser.name || !newUser.email) {
-            console.log("⚠️ Datos inválidos recibidos:", newUser);
-            return res.status(400).json({ message: "Datos inválidos" });
+        if (!req.body || Object.keys(req.body).length === 0) {
+            console.log("⚠️ El body está vacío en la solicitud del frontend");
+            return res.status(400).json({ message: "El cuerpo de la solicitud está vacío" });
         }
 
-        users.push(newUser);
-        console.log("✅ Usuario agregado en memoria:", users);
-
+        const users = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+        users.push(req.body);
         fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
-        console.log("💾 Archivo actualizado correctamente");
 
-        res.status(201).json(newUser);
+        console.log("✅ Usuario agregado:", req.body);
+        res.status(201).json(req.body);
     } catch (error) {
         console.error("❌ Error al agregar usuario:", error);
-        res.status(500).json({ message: "Error interno del servidor", error: error.message });
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };
-
 
 
 module.exports = { getUsers, addUser };
