@@ -8,16 +8,17 @@ const addUser = (req, res) => {
     try {
         console.log("📩 Recibiendo usuario:", req.body);
 
-        const newUser = req.body;
+        const { name, email, telefono, ocupacion } = req.body;
 
-        if (!newUser || !newUser.name || !newUser.email) {
-            console.log("⚠️ Datos inválidos:", newUser);
-            return res.status(400).json({ message: "Datos inválidos" });
+        if (!name || !email || !telefono || !ocupacion) {
+            console.log("⚠️ Datos inválidos:", req.body);
+            return res.status(400).json({ message: "Todos los campos son obligatorios" });
         }
 
-        users.push(newUser); // 🔥 Solo se guarda en memoria, no en archivos
-        console.log("✅ Usuario agregado:", newUser);
+        const newUser = { name, email, telefono, ocupacion };
+        users.push(newUser); // 🔥 Solo se guarda en memoria
 
+        console.log("✅ Usuario agregado:", newUser);
         res.status(201).json(newUser);
     } catch (error) {
         console.error("❌ Error en addUser:", error);
