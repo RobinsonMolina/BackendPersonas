@@ -4,5 +4,11 @@
     "email": "danielfelipesanchezpedrosa@gmail.com",
     "phone": "3112797839",
     "job": "es"
+  },
+  {
+    "nombre": "Juan Pérez",
+    "correo": "juan.perez@example.com",
+    "telefono": "123456789",
+    "ocupacion": "Ingeniero"
   }
 ]
