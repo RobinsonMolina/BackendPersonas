@@ -17,24 +17,30 @@ const getUsers = (req, res) => {
 // Agregar un nuevo usuario
 const addUser = (req, res) => {
     try {
-        console.log("📥 Datos recibidos en req.body:", req.body); // 👀 Verifica los datos
+        console.log("📥 Datos recibidos en req.body:", req.body); // 🛠️ Verificar qué llega
 
         const users = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-        const newUser = req.body;
+        console.log("📄 Usuarios antes de agregar:", users); // Verificar si el archivo se lee bien
 
+        const newUser = req.body;
         if (!newUser || !newUser.name || !newUser.email) {
+            console.log("⚠️ Datos inválidos recibidos:", newUser);
             return res.status(400).json({ message: "Datos inválidos" });
         }
 
         users.push(newUser);
+        console.log("✅ Usuario agregado en memoria:", users);
+
         fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
+        console.log("💾 Archivo actualizado correctamente");
 
         res.status(201).json(newUser);
     } catch (error) {
         console.error("❌ Error al agregar usuario:", error);
-        res.status(500).json({ message: "Error interno del servidor" });
+        res.status(500).json({ message: "Error interno del servidor", error: error.message });
     }
 };
+
 
 
 module.exports = { getUsers, addUser };
