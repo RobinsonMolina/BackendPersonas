@@ -1,40 +1,28 @@
-const fs = require("fs");
-const path = require("path");
+let users = []; // 💾 Se almacena solo mientras el servidor esté encendido
 
-const dataPath = path.join(__dirname, "../data/users.json");
-
-// Obtener todos los usuarios
 const getUsers = (req, res) => {
-    try {
-        const users = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-        res.json(users);
-    } catch (error) {
-        console.error("Error al obtener usuarios:", error);
-        res.status(500).json({ message: "Error interno del servidor" });
-    }
+    res.json(users);
 };
 
-// Agregar un nuevo usuario
 const addUser = (req, res) => {
     try {
-        console.log("📥 req.body recibido:", req.body); // Ver qué está llegando
+        console.log("📩 Recibiendo usuario:", req.body);
 
-        if (!req.body || Object.keys(req.body).length === 0) {
-            console.log("⚠️ El body está vacío en la solicitud del frontend");
-            return res.status(400).json({ message: "El cuerpo de la solicitud está vacío" });
+        const newUser = req.body;
+
+        if (!newUser || !newUser.name || !newUser.email) {
+            console.log("⚠️ Datos inválidos:", newUser);
+            return res.status(400).json({ message: "Datos inválidos" });
         }
 
-        const users = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
-        users.push(req.body);
-        fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
+        users.push(newUser); // 🔥 Solo se guarda en memoria, no en archivos
+        console.log("✅ Usuario agregado:", newUser);
 
-        console.log("✅ Usuario agregado:", req.body);
-        res.status(201).json(req.body);
+        res.status(201).json(newUser);
     } catch (error) {
-        console.error("❌ Error al agregar usuario:", error);
+        console.error("❌ Error en addUser:", error);
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
-
 
 module.exports = { getUsers, addUser };
