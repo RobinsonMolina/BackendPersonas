@@ -5,19 +5,33 @@ const dataPath = path.join(__dirname, "../data/users.json");
 
 // Obtener todos los usuarios
 const getUsers = (req, res) => {
-    const users = JSON.parse(fs.readFileSync(dataPath));
-    res.json(users);
+    try {
+        const users = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+        res.json(users);
+    } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
 };
 
 // Agregar un nuevo usuario
 const addUser = (req, res) => {
-    const users = JSON.parse(fs.readFileSync(dataPath));
-    const newUser = req.body;
+    try {
+        const users = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+        const newUser = req.body;
 
-    users.push(newUser);
-    fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
+        if (!newUser || Object.keys(newUser).length === 0) {
+            return res.status(400).json({ message: "Datos inválidos" });
+        }
 
-    res.status(201).json(newUser);
+        users.push(newUser);
+        fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
+
+        res.status(201).json(newUser);
+    } catch (error) {
+        console.error("Error al agregar usuario:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
 };
 
 module.exports = { getUsers, addUser };
